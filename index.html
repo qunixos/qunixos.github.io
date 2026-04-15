@@ -1,1 +1,161 @@
-Hello World
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qunix OS</title>
+
+<style>
+:root {
+    --bg: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    --card: rgba(255,255,255,0.1);
+    --text: #ffffff;
+}
+
+body.light {
+    --bg: linear-gradient(135deg, #e0eafc, #cfdef3);
+    --card: rgba(255,255,255,0.6);
+    --text: #000;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: 0.5s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Glass Container */
+.container {
+    width: 90%;
+    max-width: 1000px;
+    backdrop-filter: blur(15px);
+    background: var(--card);
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid rgba(255,255,255,0.2);
+    animation: fadeIn 1s ease;
+}
+
+/* Header */
+.header {
+    text-align: center;
+}
+
+.header img {
+    width: 100px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.subtitle {
+    opacity: 0.8;
+    margin-bottom: 20px;
+}
+
+/* Grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+/* Cards */
+.card {
+    backdrop-filter: blur(10px);
+    background: var(--card);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: 0.3s;
+    transform: translateY(20px);
+    opacity: 0;
+    animation: slideUp 0.6s forwards;
+}
+
+.card:nth-child(1){animation-delay:0.2s;}
+.card:nth-child(2){animation-delay:0.3s;}
+.card:nth-child(3){animation-delay:0.4s;}
+.card:nth-child(4){animation-delay:0.5s;}
+.card:nth-child(5){animation-delay:0.6s;}
+.card:nth-child(6){animation-delay:0.7s;}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* Toggle Button */
+.toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 10px;
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes slideUp {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes float {
+    0%,100% {transform: translateY(0);}
+    50% {transform: translateY(-10px);}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="toggle" onclick="toggleMode()">🌙 / ☀️</div>
+
+<div class="container">
+
+    <div class="header">
+        <img src="./assets/branding/logo.png">
+        <div class="title">Qunix OS</div>
+        <div class="subtitle">Modern Unix Reimagined • Rust Powered</div>
+    </div>
+
+    <div class="grid">
+
+        <div class="card"><h3>⚙️ Kernel</h3><p>Rust-based kernel with advanced memory and process model.</p></div>
+        <div class="card"><h3>📁 Filesystems</h3><p>ext4, FAT32, tmpfs, devfs, procfs via VFS.</p></div>
+        <div class="card"><h3>🧠 Scheduler</h3><p>Preemptive, priority-based, multi-core ready.</p></div>
+        <div class="card"><h3>🔗 IPC</h3><p>Pipes, shared memory, futex support.</p></div>
+        <div class="card"><h3>💻 Userland</h3><p>70+ utilities including shell & core tools.</p></div>
+        <div class="card"><h3>🚀 Performance</h3><p>Fast boot, zero-bloat, optimized design.</p></div>
+
+    </div>
+
+</div>
+
+<script>
+function toggleMode() {
+    document.body.classList.toggle("light");
+}
+</script>
+
+</body>
+</html>
