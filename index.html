@@ -3,279 +3,1768 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Qunix OS</title>
-
+<title>Qunix OS — Wiki</title>
 <style>
 :root {
     --bg: #0b0f14;
+    --bg2: #0e1420;
     --card: rgba(255,255,255,0.04);
-    --border: rgba(255,255,255,0.1);
+    --card-hover: rgba(255,255,255,0.07);
+    --border: rgba(255,255,255,0.08);
+    --border-accent: rgba(59,130,246,0.4);
     --text: #e6edf3;
-    --muted: #9aa4ad;
+    --muted: #8b95a1;
+    --muted2: #6b7a8a;
     --accent: #3b82f6;
-    --accent-glow: rgba(59, 130, 246, 0.15);
-    --shadow: rgba(0, 0, 0, 0.3);
+    --accent2: #60a5fa;
+    --accent-glow: rgba(59,130,246,0.15);
+    --accent-glow2: rgba(59,130,246,0.08);
+    --shadow: rgba(0,0,0,0.4);
+    --code-bg: rgba(255,255,255,0.05);
+    --tag-bg: rgba(59,130,246,0.12);
+    --success: #22c55e;
+    --warn: #f59e0b;
+    --sidebar-w: 240px;
 }
 
 body.light {
-    --bg: #f5f7fa;
-    --card: rgba(255,255,255,0.8);
-    --border: rgba(0,0,0,0.06);
-    --text: #111;
-    --muted: #555;
+    --bg: #f0f4f8;
+    --bg2: #e8eef5;
+    --card: rgba(255,255,255,0.9);
+    --card-hover: #ffffff;
+    --border: rgba(0,0,0,0.07);
+    --border-accent: rgba(37,99,235,0.3);
+    --text: #0f172a;
+    --muted: #4b5563;
+    --muted2: #6b7280;
     --accent: #2563eb;
-    --accent-glow: rgba(37, 99, 235, 0.1);
-    --shadow: rgba(0, 0, 0, 0.05);
+    --accent2: #3b82f6;
+    --accent-glow: rgba(37,99,235,0.12);
+    --accent-glow2: rgba(37,99,235,0.06);
+    --shadow: rgba(0,0,0,0.06);
+    --code-bg: rgba(0,0,0,0.05);
+    --tag-bg: rgba(37,99,235,0.1);
 }
 
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
 
 body {
-    margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: var(--bg);
     color: var(--text);
-    /* Smoother theme switching */
-    transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s ease;
+    transition: background-color 0.4s cubic-bezier(0.4,0,0.2,1), color 0.3s ease;
     overflow-x: hidden;
+    line-height: 1.6;
 }
 
-/* NAVBAR */
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ── NAV ── */
 .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 18px 40px;
+    padding: 14px 28px;
     border-bottom: 1px solid var(--border);
-    animation: fadeIn 0.8s ease-out both;
+    background: rgba(11,15,20,0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    animation: fadeIn 0.6s ease both;
 }
 
-.nav img {
-    height: 34px;
-    transition: transform 0.3s ease;
+body.light .nav {
+    background: rgba(240,244,248,0.88);
 }
 
-.nav img:hover {
-    transform: scale(1.05);
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.nav-logo {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--text);
+    text-decoration: none;
+}
+
+.nav-logo span {
+    color: var(--accent);
+}
+
+.nav-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--tag-bg);
+    color: var(--accent);
+    border: 1px solid var(--border-accent);
+    font-weight: 500;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-link {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    color: var(--text);
+    background: var(--card);
 }
 
 .toggle {
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     padding: 6px 12px;
     border-radius: 6px;
     border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
     transition: all 0.2s ease;
     user-select: none;
 }
 
 .toggle:hover {
-    background: var(--card);
     border-color: var(--accent);
+    color: var(--text);
     transform: translateY(-1px);
 }
 
-.toggle:active {
-    transform: translateY(1px);
+/* ── LAYOUT ── */
+.layout {
+    display: flex;
+    padding-top: 57px;
+    min-height: 100vh;
 }
 
-/* HERO */
+/* ── SIDEBAR ── */
+.sidebar {
+    position: fixed;
+    top: 57px; bottom: 0; left: 0;
+    width: var(--sidebar-w);
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+    padding: 24px 0 40px;
+    background: var(--bg);
+    animation: fadeIn 0.7s ease 0.1s both;
+}
+
+.sidebar-section {
+    margin-bottom: 20px;
+}
+
+.sidebar-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted2);
+    padding: 0 20px;
+    margin-bottom: 6px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 20px;
+    font-size: 13.5px;
+    color: var(--muted);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+}
+
+.sidebar-link:hover {
+    color: var(--text);
+    background: var(--card);
+}
+
+.sidebar-link.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: var(--accent-glow2);
+}
+
+.sidebar-link svg {
+    width: 14px; height: 14px;
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+/* ── MAIN CONTENT ── */
+.main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    min-width: 0;
+}
+
+/* ── HERO ── */
 .hero {
     text-align: center;
-    padding: 100px 20px 60px;
+    padding: 80px 40px 70px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 400px;
+    background: radial-gradient(ellipse, rgba(59,130,246,0.1) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.hero-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    animation: fadeInUp 0.7s cubic-bezier(0.16,1,0.3,1) both;
 }
 
 .hero h1 {
-    font-size: 48px;
-    margin: 10px 0;
-    letter-spacing: -0.5px;
-    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    font-size: 52px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.05;
+    margin-bottom: 18px;
+    animation: fadeInUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.08s both;
 }
 
-.hero p {
+.hero h1 .accent { color: var(--accent); }
+
+.hero-sub {
+    font-size: 17px;
     color: var(--muted);
-    font-size: 18px;
-    max-width: 600px;
-    margin: auto;
-    line-height: 1.5;
-    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+    max-width: 560px;
+    margin: 0 auto 32px;
+    line-height: 1.65;
+    animation: fadeInUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.16s both;
 }
 
-/* BUTTON */
+.hero-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeInUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.24s both;
+}
+
 .btn {
-    margin-top: 30px;
-    display: inline-block;
-    padding: 12px 26px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 22px;
     border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+    cursor: pointer;
+    border: none;
+}
+
+.btn-primary {
     background: var(--accent);
     color: white;
-    text-decoration: none;
-    font-weight: 500;
-    box-shadow: 0 4px 12px var(--accent-glow);
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both, pulseGlow 3s infinite 1.5s;
+    box-shadow: 0 4px 14px var(--accent-glow);
+    animation: pulseGlow 3s infinite 2s;
 }
 
-.btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px var(--accent-glow);
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px var(--accent-glow);
     filter: brightness(1.1);
 }
 
-.btn:active {
-    transform: translateY(-1px);
+.btn-outline {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
 }
 
-/* SECTION */
+.btn-outline:hover {
+    border-color: var(--accent);
+    background: var(--accent-glow2);
+    transform: translateY(-2px);
+}
+
+/* ── STATS BAR ── */
+.stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    animation: fadeInUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.32s both;
+    overflow-x: auto;
+}
+
+.stat-item {
+    flex: 1;
+    min-width: 120px;
+    padding: 22px 20px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+    transition: background 0.2s;
+}
+
+.stat-item:last-child { border-right: none; }
+.stat-item:hover { background: var(--card); }
+
+.stat-num {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.5px;
+}
+
+.stat-num .accent { color: var(--accent); }
+
+.stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 3px;
+}
+
+/* ── SECTION ── */
 .section {
-    max-width: 1100px;
-    margin: auto;
-    padding: 40px 20px 80px;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 60px 32px;
+    scroll-margin-top: 80px;
 }
 
-/* GRID */
-.grid {
+.section-header {
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.section-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+}
+
+.section-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.section-header p {
+    font-size: 15px;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.6;
+}
+
+/* ── GRID ── */
+.grid-2 {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-    animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
 }
 
-/* CARD */
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+}
+
+/* ── CARD ── */
 .card {
-    padding: 26px;
-    border-radius: 14px;
+    padding: 22px;
+    border-radius: 12px;
     background: var(--card);
     border: 1px solid var(--border);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-                border-color 0.3s ease, 
-                box-shadow 0.4s ease, 
-                background-color 0.3s ease;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1),
+                border-color 0.25s ease,
+                box-shadow 0.35s ease,
+                background 0.25s ease;
 }
 
 .card:hover {
-    transform: translateY(-6px);
-    border-color: var(--accent);
-    background: linear-gradient(145deg, var(--card), rgba(255,255,255,0.01));
-    box-shadow: 0 12px 24px var(--shadow), 0 0 15px var(--accent-glow);
+    transform: translateY(-4px);
+    border-color: var(--border-accent);
+    background: var(--card-hover);
+    box-shadow: 0 12px 28px var(--shadow), 0 0 0 1px var(--accent-glow);
 }
 
-body.light .card:hover {
-    background: #ffffff;
+.card-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: var(--tag-bg);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 14px;
+    font-size: 17px;
 }
 
 .card h3 {
-    margin-top: 0;
-    font-size: 19px;
-    margin-bottom: 10px;
-    transition: color 0.3s ease;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    transition: color 0.2s;
 }
 
-.card:hover h3 {
-    color: var(--accent);
-}
+.card:hover h3 { color: var(--accent2); }
 
 .card p {
+    font-size: 13.5px;
     color: var(--muted);
-    font-size: 14.5px;
-    line-height: 1.6;
+    line-height: 1.55;
+}
+
+/* ── CODE BLOCK ── */
+.code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 16px 0;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+}
+
+.code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+}
+
+.code-lang {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+}
+
+.code-copy {
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: transparent;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.code-copy:hover { border-color: var(--accent); color: var(--accent); }
+.code-copy.copied { color: var(--success); border-color: var(--success); }
+
+.code-block pre {
+    padding: 16px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--text);
+}
+
+.code-block code { white-space: pre; display: block; }
+
+/* syntax coloring */
+.kw { color: #79c0ff; }
+.fn { color: #d2a8ff; }
+.str { color: #a5d6ff; }
+.cm { color: var(--muted2); font-style: italic; }
+.num { color: #f2cc60; }
+.op { color: #ff7b72; }
+
+/* ── MEMORY MAP ── */
+.mem-map {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 12.5px;
+}
+
+.mem-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 9px 16px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+}
+
+.mem-row:last-child { border-bottom: none; }
+.mem-row:hover { background: var(--card); }
+
+.mem-row.divider {
+    background: rgba(59,130,246,0.05);
+    border-color: var(--border-accent);
+    color: var(--accent);
+    font-weight: 600;
+    justify-content: center;
+    letter-spacing: 0.05em;
+}
+
+.mem-addr { color: var(--accent2); min-width: 210px; font-size: 12px; }
+.mem-name { color: var(--text); flex: 1; }
+.mem-badge {
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 10px;
+    border: 1px solid;
+}
+.mem-badge.user { color: var(--success); border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.06); }
+.mem-badge.kernel { color: var(--accent); border-color: var(--border-accent); background: var(--accent-glow2); }
+
+/* ── CHANGELOG ── */
+.changelog-item {
+    display: flex;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.changelog-item:last-child { border-bottom: none; }
+
+.changelog-ver {
+    flex-shrink: 0;
+    width: 80px;
+    text-align: right;
+}
+
+.ver-num {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: "SF Mono", monospace;
+}
+
+.ver-date {
+    font-size: 11px;
+    color: var(--muted2);
+    margin-top: 3px;
+}
+
+.changelog-content h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.changelog-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--tag-bg);
+    color: var(--accent);
+    border: 1px solid var(--border-accent);
+}
+
+.tag.green { color: var(--success); border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.08); }
+.tag.yellow { color: var(--warn); border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.08); }
+
+/* ── TODO / ROADMAP ── */
+.todo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.todo-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    font-size: 13.5px;
+    transition: border-color 0.2s;
+}
+
+.todo-item:hover { border-color: var(--border-accent); }
+
+.todo-check {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px;
+}
+
+.todo-check.done {
+    background: var(--success);
+    border-color: var(--success);
+    color: white;
+}
+
+.todo-check.pending {
+    border-color: var(--warn);
+}
+
+.todo-text { flex: 1; color: var(--muted); line-height: 1.5; }
+.todo-text strong { color: var(--text); }
+
+/* ── UTILITY GRID ── */
+.util-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.util-chip {
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition: all 0.15s;
+}
+
+.util-chip:hover {
+    border-color: var(--accent);
+    color: var(--accent2);
+    background: var(--tag-bg);
+}
+
+/* ── SUBSYSTEM TABLE ── */
+.sub-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+}
+
+.sub-table th {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted2);
+}
+
+.sub-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--muted);
+    vertical-align: top;
+}
+
+.sub-table td:first-child {
+    font-family: "SF Mono", monospace;
+    font-size: 12.5px;
+    color: var(--accent2);
+    white-space: nowrap;
+}
+
+.sub-table tr:hover td { background: var(--card); }
+
+/* ── SECURITY STATUS ── */
+.sec-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sec-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    font-size: 13.5px;
+    transition: border-color 0.2s;
+}
+
+.sec-item:hover { border-color: var(--border-accent); }
+
+.sec-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.sec-dot.active { background: var(--success); box-shadow: 0 0 6px rgba(34,197,94,0.5); }
+.sec-dot.partial { background: var(--warn); box-shadow: 0 0 6px rgba(245,158,11,0.4); }
+.sec-dot.planned { background: var(--muted2); }
+
+.sec-name { flex: 1; color: var(--text); }
+.sec-desc { color: var(--muted); font-size: 12.5px; }
+
+.sec-status {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.sec-status.active { background: rgba(34,197,94,0.1); color: var(--success); }
+.sec-status.partial { background: rgba(245,158,11,0.1); color: var(--warn); }
+.sec-status.planned { background: rgba(107,114,128,0.15); color: var(--muted); }
+
+/* ── SIGNAL FLOW ── */
+.flow {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-family: "SF Mono", monospace;
+    font-size: 12.5px;
+    padding: 16px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.flow .step { color: var(--text); }
+.flow .arrow { color: var(--accent); }
+.flow .sub-step { padding-left: 20px; }
+.flow .sub-sub { padding-left: 40px; }
+
+/* ── FOOTER ── */
+.footer {
+    margin-left: var(--sidebar-w);
+    text-align: center;
+    padding: 28px;
+    font-size: 13px;
+    color: var(--muted2);
+    border-top: 1px solid var(--border);
+    animation: fadeIn 1s ease 0.5s both;
+}
+
+.footer a { color: var(--accent); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+
+/* ── BACK TO TOP ── */
+.back-top {
+    position: fixed;
+    bottom: 28px; right: 28px;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 14px var(--accent-glow);
+    transition: all 0.3s;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+}
+
+.back-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.back-top:hover { transform: translateY(-3px); box-shadow: 0 8px 20px var(--accent-glow); }
+
+/* ── DIVIDER ── */
+.divider {
+    border: none;
+    border-top: 1px solid var(--border);
     margin: 0;
 }
 
-/* FOOTER */
-.footer {
-    text-align: center;
-    padding: 30px;
-    font-size: 14px;
-    color: var(--muted);
-    border-top: 1px solid var(--border);
-    animation: fadeIn 1s ease-out 0.6s both;
+/* ── INTERSECT ANIMATIONS ── */
+.reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1);
 }
 
-/* ANIMATIONS */
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ── KEYFRAMES ── */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(22px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes pulseGlow {
-    0%, 100% { box-shadow: 0 4px 12px var(--accent-glow); }
-    50% { box-shadow: 0 4px 20px var(--accent); }
+    0%, 100% { box-shadow: 0 4px 14px var(--accent-glow); }
+    50% { box-shadow: 0 4px 24px rgba(59,130,246,0.45); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main, .footer { margin-left: 0; }
+    .hero h1 { font-size: 36px; }
+    .section { padding: 40px 20px; }
+    .stats-bar { flex-wrap: wrap; }
+    .stat-item { min-width: 50%; }
+    .mem-addr { min-width: 150px; }
+    .mem-badge { display: none; }
+    .nav-link { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, .reveal { animation: none !important; transition: none !important; }
 }
 </style>
 </head>
-
 <body>
 
-<div class="nav">
-    <img src="./assets/branding/logo.png" alt="Qunix OS Logo">
-    <div class="toggle" onclick="toggleMode()">Toggle Theme</div>
-</div>
+<!-- NAV -->
+<nav class="nav">
+    <div class="nav-left">
+        <a href="#" class="nav-logo">Qu<span>nix</span> OS</a>
+        <span class="nav-badge">v0.2.0</span>
+    </div>
+    <div class="nav-right">
+        <a href="#overview" class="nav-link">Overview</a>
+        <a href="#architecture" class="nav-link">Architecture</a>
+        <a href="#building" class="nav-link">Building</a>
+        <a href="#userland" class="nav-link">Userland</a>
+        <div class="toggle" onclick="toggleMode()">☀︎ / ☾</div>
+    </div>
+</nav>
 
-<div class="hero">
-    <h1>Qunix OS</h1>
-    <p>A modern Unix-like operating system written in Rust, designed for performance, stability, and simplicity.</p>
-    <a href="https://github.com/MohammadMuzamil23/Qunix-Operating-System/" class="btn">View on GitHub</a>
-</div>
+<!-- LAYOUT -->
+<div class="layout">
 
-<div class="section">
-    <div class="grid">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sidebar-section">
+        <div class="sidebar-label">Getting Started</div>
+        <a class="sidebar-link active" onclick="scrollTo('hero')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            Home
+        </a>
+        <a class="sidebar-link" onclick="scrollTo('overview')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Overview
+        </a>
+        <a class="sidebar-link" onclick="scrollTo('building')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Building
+        </a>
+    </div>
+    <div class="sidebar-section">
+        <div class="sidebar-label">Kernel</div>
+        <a class="sidebar-link" onclick="scrollTo('architecture')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Architecture
+        </a>
+        <a class="sidebar-link" onclick="scrollTo('memory')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            Memory Layout
+        </a>
+        <a class="sidebar-link" onclick="scrollTo('subsystems')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+            Subsystems
+        </a>
+        <a class="sidebar-link" onclick="scrollTo('signals')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Signal Flow
+        </a>
+        <a class="sidebar-link" onclick="scrollTo('syscalls')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Syscall ABI
+        </a>
+    </div>
+    <div class="sidebar-section">
+        <div class="sidebar-label">Userspace</div>
+        <a class="sidebar-link" onclick="scrollTo('userland')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Userland
+        </a>
+        <a class="sidebar-link" onclick="scrollTo('shell')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            qshell
+        </a>
+        <a class="sidebar-link" onclick="scrollTo('plugins')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.24 12.24a6 6 0 00-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>
+            Plugins
+        </a>
+    </div>
+    <div class="sidebar-section">
+        <div class="sidebar-label">Reference</div>
+        <a class="sidebar-link" onclick="scrollTo('security')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Security
+        </a>
+        <a class="sidebar-link" onclick="scrollTo('changelog')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Changelog
+        </a>
+        <a class="sidebar-link" onclick="scrollTo('roadmap')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Roadmap
+        </a>
+        <a class="sidebar-link" href="https://github.com/MohammadMuzamil23/Qunix-Operating-System/" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub
+        </a>
+    </div>
+</aside>
 
-        <div class="card">
-            <h3>Kernel Architecture</h3>
-            <p>Rust-based kernel with full process model, signals, and memory management.</p>
-        </div>
+<!-- MAIN -->
+<main class="main">
 
-        <div class="card">
-            <h3>Filesystem Support</h3>
-            <p>Unified VFS with ext4, FAT32, tmpfs, devfs, and procfs support.</p>
-        </div>
+<!-- HERO -->
+<section id="hero" class="hero">
+    <div class="hero-eyebrow">Open Source · Rust-Powered · x86-64</div>
+    <h1><span class="accent">Qunix</span> OS<br>Wiki</h1>
+    <p class="hero-sub">A modern Unix-like operating system written entirely in Rust — designed for performance, memory safety, and full POSIX compatibility.</p>
+    <div class="hero-actions">
+        <a href="https://github.com/MohammadMuzamil23/Qunix-Operating-System/" class="btn btn-primary" target="_blank">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            View on GitHub
+        </a>
+        <a href="#building" class="btn btn-outline">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Build from Source
+        </a>
+    </div>
+</section>
 
-        <div class="card">
-            <h3>Scheduler</h3>
-            <p>Preemptive, priority-driven scheduler designed for multi-core systems.</p>
-        </div>
-
-        <div class="card">
-            <h3>Interprocess Communication</h3>
-            <p>Efficient IPC with pipes, shared memory, and futex mechanisms.</p>
-        </div>
-
-        <div class="card">
-            <h3>Userland</h3>
-            <p>Includes 70+ utilities with a POSIX-compatible shell environment.</p>
-        </div>
-
-        <div class="card">
-            <h3>Performance</h3>
-            <p>Optimized for fast boot times and minimal system overhead.</p>
-        </div>
-
+<!-- STATS -->
+<div class="stats-bar reveal">
+    <div class="stat-item">
+        <div class="stat-num">70<span class="accent">+</span></div>
+        <div class="stat-label">Userland Utilities</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-num">250<span class="accent">+</span></div>
+        <div class="stat-label">Syscalls Implemented</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-num">5</div>
+        <div class="stat-label">Filesystem Backends</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-num">100<span class="accent">%</span></div>
+        <div class="stat-label">Written in Rust</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-num">v0.2</div>
+        <div class="stat-label">Current Release</div>
     </div>
 </div>
 
-<div class="footer">
-    © Qunix OS — Apache 2.0 License
+<hr class="divider">
+
+<!-- OVERVIEW -->
+<section id="overview" class="section">
+    <div class="section-header reveal">
+        <div class="section-eyebrow">Introduction</div>
+        <h2>Overview</h2>
+        <p>Qunix is a monolithic kernel written in Rust targeting x86-64, combining language-level memory safety with a full-featured POSIX-compatible userspace environment. It aims to be complete, not minimal.</p>
+    </div>
+
+    <div class="grid-2 reveal">
+        <div class="card">
+            <div class="card-icon">⚙️</div>
+            <h3>Full Process Model</h3>
+            <p>Complete fork/exec/wait/exit semantics with POSIX signals, job control, sigaction, sigprocmask, and sigreturn.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">💾</div>
+            <h3>Virtual File System</h3>
+            <p>Layered VFS abstraction over ext4, FAT32, tmpfs, devfs, and procfs with inode/dentry caching and full mount support.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🧠</div>
+            <h3>Memory Management</h3>
+            <p>Demand-paged virtual memory, Copy-on-Write fork, mmap/munmap/mremap/brk, transparent huge pages, and slab allocator.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">⚡</div>
+            <h3>Preemptive Scheduler</h3>
+            <p>Priority-based preemptive scheduler with multi-CPU support, per-CPU run queues, load balancing, and real-time scheduling classes.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🔗</div>
+            <h3>IPC Mechanisms</h3>
+            <p>Pipes with proper EOF/EPIPE semantics, shared memory (shmget/shmat), message queues, semaphores, and futexes with WAIT/WAKE/REQUEUE.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🌐</div>
+            <h3>Networking Stack</h3>
+            <p>Full TCP/UDP implementation with IPv4/v6 routing, BSD socket API, and an io_uring-backed async I/O path.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🛡️</div>
+            <h3>Security</h3>
+            <p>Process namespaces, memory tagging extensions, seccomp system call filtering, and mandatory access control policies.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🔌</div>
+            <h3>Plugin System</h3>
+            <p>Loadable kernel modules with runtime insertion/removal, hook points throughout subsystems, and config-driven management via <code style="font-size:12px;color:var(--accent2)">pluginctl</code>.</p>
+        </div>
+    </div>
+
+    <div class="section-header reveal" style="margin-top:48px;">
+        <div class="section-eyebrow">Development Status</div>
+        <h2>What's Implemented</h2>
+    </div>
+
+    <div class="todo-list reveal">
+        <div class="todo-item">
+            <div class="todo-check done">✓</div>
+            <div class="todo-text"><strong>Kernel boot &amp; serial output</strong> — UEFI bootloader, hardware init, GDT/IDT setup</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check done">✓</div>
+            <div class="todo-text"><strong>Memory management &amp; paging</strong> — 4-level page tables, physical frame allocator, VMM</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check done">✓</div>
+            <div class="todo-text"><strong>Process creation &amp; scheduling</strong> — fork, exec, wait, exit, priority queues</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check done">✓</div>
+            <div class="todo-text"><strong>Filesystem support</strong> — ext4 with journaling, FAT32, tmpfs, devfs, procfs</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check done">✓</div>
+            <div class="todo-text"><strong>70+ userland utilities</strong> — shell, coreutils, text processing, system tools</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check done">✓</div>
+            <div class="todo-text"><strong>Networking stack</strong> — TCP/UDP, socket API, IP routing</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check done">✓</div>
+            <div class="todo-text"><strong>Plugin system</strong> — runtime loadable modules, hook integration</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check pending"></div>
+            <div class="todo-text"><strong>Full POSIX compliance testing</strong> — in progress</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check pending"></div>
+            <div class="todo-text"><strong>SMP optimization</strong> — per-CPU run queues exist; deeper NUMA/load-balance work planned</div>
+        </div>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- BUILDING -->
+<section id="building" class="section">
+    <div class="section-header reveal">
+        <div class="section-eyebrow">Build Guide</div>
+        <h2>Building Qunix</h2>
+        <p>Requires a Linux host (Ubuntu 20.04+ recommended), Rust nightly, and a small set of system tools. The build system is a single shell script.</p>
+    </div>
+
+    <div class="grid-2 reveal" style="margin-bottom:28px;">
+        <div class="card">
+            <h3>System Requirements</h3>
+            <p>Linux x86-64 host · 4 GB RAM · 10 GB free disk · Ubuntu 20.04 or newer recommended</p>
+        </div>
+        <div class="card">
+            <h3>Rust Toolchain</h3>
+            <p>Rust nightly ≥ 2024-01, <code style="font-size:12px;color:var(--accent2)">rust-src</code> component, <code style="font-size:12px;color:var(--accent2)">ld.lld ≥ 14</code>, <code style="font-size:12px;color:var(--accent2)">mtools</code>, <code style="font-size:12px;color:var(--accent2)">xorriso</code>, <code style="font-size:12px;color:var(--accent2)">qemu-system-x86_64 ≥ 7.0</code></p>
+        </div>
+    </div>
+
+    <div class="reveal">
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">bash — 1. Install Dependencies</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+            <pre><code><span class="cm"># Ubuntu/Debian</span>
+sudo apt-get install -y lld mtools xorriso qemu-system-x86_64 curl build-essential
+
+<span class="cm"># Install Rust nightly</span>
+curl --proto <span class="str">'=https'</span> --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+source $HOME/.cargo/env
+rustup toolchain install nightly
+rustup component add rust-src --toolchain nightly
+
+<span class="cm"># Or use the setup script</span>
+./SETUP.sh</code></pre>
+        </div>
+    </div>
+
+    <div class="reveal">
+        <div class="code-block" style="margin-top:12px;">
+            <div class="code-header"><span class="code-lang">bash — 2. Build &amp; Run</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+            <pre><code><span class="cm"># Build kernel only</span>
+./build.sh kernel
+
+<span class="cm"># Build everything and create bootable ISO</span>
+./build.sh iso
+
+<span class="cm"># Build and run in QEMU (512 MB RAM, 1 CPU)</span>
+./build.sh run
+
+<span class="cm"># More RAM, more CPUs</span>
+QEMU_MEMORY=2G QEMU_CPUS=4 ./build.sh run</code></pre>
+        </div>
+    </div>
+
+    <div class="reveal">
+        <div class="code-block" style="margin-top:12px;">
+            <div class="code-header"><span class="code-lang">bash — Build Artifacts</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+            <pre><code>kernel/target/x86_64-qunix/release/qunix          <span class="cm"># kernel binary</span>
+bootloader/target/release/bootloader.efi           <span class="cm"># UEFI bootloader</span>
+userland/target/x86_64-qunix-user/release/         <span class="cm"># userland binaries</span>
+qunix.iso                                          <span class="cm"># bootable ISO image</span></code></pre>
+        </div>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- ARCHITECTURE -->
+<section id="architecture" class="section">
+    <div class="section-header reveal">
+        <div class="section-eyebrow">Kernel Design</div>
+        <h2>Architecture</h2>
+        <p>Qunix implements a monolithic kernel design — all core services run in kernel space, providing high performance and tight integration while leveraging Rust's ownership system for safety.</p>
+    </div>
+
+    <div class="grid-3 reveal">
+        <div class="card">
+            <div class="card-icon">🏗️</div>
+            <h3>Monolithic Kernel</h3>
+            <p>All subsystems in kernel space with zero-cost Rust abstractions and no unsafe code outside isolated arch/driver layers.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🔒</div>
+            <h3>Memory Safety</h3>
+            <p>Rust ownership rules eliminate buffer overflows, use-after-free, and data races at compile time throughout the kernel.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🔄</div>
+            <h3>Linux ABI Compat</h3>
+            <p>abi_compat layer provides Linux syscall compatibility, enabling standard toolchains to target Qunix.</p>
+        </div>
+    </div>
+
+    <!-- Boot process -->
+    <div class="section-header reveal" style="margin-top:40px;">
+        <div class="section-eyebrow">Boot Sequence</div>
+        <h2>Boot Process</h2>
+    </div>
+
+    <div class="grid-2 reveal">
+        <div class="card">
+            <h3>① UEFI Bootloader</h3>
+            <p>Loads kernel ELF binary and initramfs from the EFI partition. Performs memory map discovery and hands off to kernel_main().</p>
+        </div>
+        <div class="card">
+            <h3>② Hardware Init</h3>
+            <p>Sets up GDT, IDT, TSS. Initializes physical memory allocator using UEFI memory map. Configures paging, PIT, and APIC.</p>
+        </div>
+        <div class="card">
+            <h3>③ Subsystem Init</h3>
+            <p>Initializes VMM, slab allocator, scheduler, device drivers, VFS with essential mounts (tmpfs, devfs, procfs), and networking.</p>
+        </div>
+        <div class="card">
+            <h3>④ Userland Launch</h3>
+            <p>Loads init binary (PID 1) via ELF loader. Init mounts ext4 root, starts qshell, and presents the interactive prompt.</p>
+        </div>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- MEMORY LAYOUT -->
+<section id="memory" class="section">
+    <div class="section-header reveal">
+        <div class="section-eyebrow">x86-64 Virtual Address Space</div>
+        <h2>Memory Layout</h2>
+        <p>Qunix uses the full 48-bit canonical x86-64 address space split between user and kernel halves.</p>
+    </div>
+
+    <div class="mem-map reveal">
+        <div class="mem-row">
+            <span class="mem-addr">0x0000_0000_0000_0000</span>
+            <span class="mem-name">User space start</span>
+            <span class="mem-badge user">user</span>
+        </div>
+        <div class="mem-row">
+            <span class="mem-addr">0x0000_0001_0000_0000</span>
+            <span class="mem-name">Heap start (brk)</span>
+            <span class="mem-badge user">user</span>
+        </div>
+        <div class="mem-row">
+            <span class="mem-addr">0x0000_4000_0000_0000</span>
+            <span class="mem-name">mmap base</span>
+            <span class="mem-badge user">user</span>
+        </div>
+        <div class="mem-row">
+            <span class="mem-addr">0x0000_5000_0000_0000</span>
+            <span class="mem-name">PIE executable base</span>
+            <span class="mem-badge user">user</span>
+        </div>
+        <div class="mem-row">
+            <span class="mem-addr">0x0000_7FFF_0000_0000</span>
+            <span class="mem-name">Dynamic linker (ld.so)</span>
+            <span class="mem-badge user">user</span>
+        </div>
+        <div class="mem-row">
+            <span class="mem-addr">0x0000_7FFF_FFFF_0000</span>
+            <span class="mem-name">User stack top</span>
+            <span class="mem-badge user">user</span>
+        </div>
+        <div class="mem-row divider">— Canonical Hole —</div>
+        <div class="mem-row">
+            <span class="mem-addr">0xFFFF_8000_0000_0000</span>
+            <span class="mem-name">Kernel virtual base / direct map</span>
+            <span class="mem-badge kernel">kernel</span>
+        </div>
+        <div class="mem-row">
+            <span class="mem-addr">0xFFFF_C000_0000_0000</span>
+            <span class="mem-name">Kernel heap (vmalloc)</span>
+            <span class="mem-badge kernel">kernel</span>
+        </div>
+        <div class="mem-row">
+            <span class="mem-addr">0xFFFF_FFFF_FFFF_FFFF</span>
+            <span class="mem-name">Top of address space</span>
+            <span class="mem-badge kernel">kernel</span>
+        </div>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- SUBSYSTEMS -->
+<section id="subsystems" class="section">
+    <div class="section-header reveal">
+        <div class="section-eyebrow">Kernel Internals</div>
+        <h2>Subsystems</h2>
+        <p>Every subsystem maps to a distinct module in <code style="color:var(--accent2)">kernel/src/</code> with clear interfaces and minimal coupling.</p>
+    </div>
+
+    <div class="reveal">
+        <table class="sub-table">
+            <thead>
+                <tr>
+                    <th>Module</th>
+                    <th>Path</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>arch/x86_64</td><td>arch/x86_64/</td><td>GDT, IDT, paging, syscall entry, SMP, TSS, MSRs</td></tr>
+                <tr><td>memory</td><td>memory/</td><td>Physical frame allocator, VMM, slab, CoW fork, THP, zswap, NUMA</td></tr>
+                <tr><td>process</td><td>process/</td><td>PCB, fork/exec/exit, process groups, sessions, credentials</td></tr>
+                <tr><td>sched</td><td>sched/</td><td>Priority run queues, preemptive scheduling, multi-CPU, RT classes</td></tr>
+                <tr><td>syscall</td><td>syscall/</td><td>Fast dispatch table, ~250 handlers, argument validation, errno</td></tr>
+                <tr><td>vfs</td><td>vfs/</td><td>Inode/dentry cache, mount points, path resolution, access control</td></tr>
+                <tr><td>fs</td><td>fs/</td><td>ext4 (journaling), FAT32, tmpfs, devfs, procfs</td></tr>
+                <tr><td>drivers</td><td>drivers/</td><td>PCIe, NVMe, serial, VGA, keyboard, GPU/framebuffer, ACPI, network</td></tr>
+                <tr><td>net</td><td>net/</td><td>IP, TCP, UDP, BSD sockets, routing</td></tr>
+                <tr><td>ipc</td><td>ipc/</td><td>Pipes, shared memory, message queues, semaphores, futexes, epoll</td></tr>
+                <tr><td>signal</td><td>signal/</td><td>Signal delivery, sigreturn, signal masks, POSIX semantics</td></tr>
+                <tr><td>security</td><td>security/</td><td>Namespaces, memory tagging, seccomp, MAC policies</td></tr>
+                <tr><td>tty</td><td>tty/</td><td>Line discipline, canonical/raw modes, termios, job control</td></tr>
+                <tr><td>elf</td><td>elf/</td><td>ELF64 loader, static and dynamic binaries, interpreter support</td></tr>
+                <tr><td>io_uring</td><td>io_uring/</td><td>High-performance async I/O ring interface</td></tr>
+                <tr><td>drm</td><td>drm/</td><td>Direct Rendering Manager, KMS, GPU console</td></tr>
+                <tr><td>plugins</td><td>plugins/</td><td>Loadable module infrastructure, hooks, hot load/unload</td></tr>
+                <tr><td>rtos</td><td>rtos/</td><td>Real-time scheduling support</td></tr>
+                <tr><td>perf</td><td>perf/</td><td>Performance monitoring counters and tracing</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- SYSCALL ABI -->
+<section id="syscalls" class="section">
+    <div class="section-header reveal">
+        <div class="section-eyebrow">User–Kernel Interface</div>
+        <h2>Syscall ABI</h2>
+        <p>Qunix implements the standard Linux x86-64 syscall ABI — fully compatible with Linux binaries targeting <code style="color:var(--accent2)">x86_64-qunix-user</code>.</p>
+    </div>
+
+    <div class="grid-2 reveal" style="margin-bottom:24px;">
+        <div class="card">
+            <h3>Calling Convention</h3>
+            <p>Uses the <code style="font-size:12px;color:var(--accent2)">syscall</code> instruction for entry and <code style="font-size:12px;color:var(--accent2)">sysretq</code> for return. Syscall number in <code style="font-size:12px;color:var(--accent2)">rax</code>; arguments in <code style="font-size:12px;color:var(--accent2)">rdi rsi rdx r10 r8 r9</code>. Return value in <code style="font-size:12px;color:var(--accent2)">rax</code>.</p>
+        </div>
+        <div class="card">
+            <h3>Coverage</h3>
+            <p>Approximately 250 syscalls including all major POSIX calls and Linux-specific extensions. Unimplemented calls return <code style="font-size:12px;color:var(--accent2)">ENOSYS</code> cleanly.</p>
+        </div>
+    </div>
+
+    <div class="code-block reveal">
+        <div class="code-header"><span class="code-lang">rust — Adding a Syscall</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+        <pre><code><span class="cm">// 1. Add handler in kernel/src/syscall/handlers.rs</span>
+<span class="kw">pub fn</span> <span class="fn">sys_mysyscall</span>(&amp;<span class="kw">mut</span> self, arg1: <span class="kw">usize</span>, arg2: <span class="kw">usize</span>)
+    -> <span class="kw">Result</span>&lt;<span class="kw">usize</span>, Errno&gt; {
+    <span class="cm">// implementation</span>
+    <span class="kw">Ok</span>(<span class="num">0</span>)
+}
+
+<span class="cm">// 2. Wire into dispatch table in kernel/src/syscall/mod.rs</span>
+<span class="kw">const</span> MY_SYSCALL: <span class="kw">usize</span> = <span class="num">400</span>;
+<span class="fn">syscall!</span>(MY_SYSCALL, mysyscall);
+
+<span class="cm">// 3. Add libsys wrapper in userland/libsys/src/lib.rs</span>
+<span class="kw">pub fn</span> <span class="fn">mysyscall</span>(arg1: <span class="kw">usize</span>, arg2: <span class="kw">usize</span>) -> <span class="kw">isize</span> {
+    <span class="kw">unsafe</span> { <span class="fn">syscall2</span>(MY_SYSCALL, arg1, arg2) }
+}</code></pre>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- SIGNAL FLOW -->
+<section id="signals" class="section">
+    <div class="section-header reveal">
+        <div class="section-eyebrow">POSIX Signals</div>
+        <h2>Signal Delivery Flow</h2>
+        <p>Signals are queued in the process control block and delivered at syscall exit, preserving full register state through a user-space signal frame.</p>
+    </div>
+
+    <div class="flow reveal">
+        <span class="step">send_signal(pid, sig)</span>
+        <span class="sub-step arrow">→ p.sig_pending.add(sig)</span>
+        <span class="sub-step arrow">→ wake_process(pid)  <span style="color:var(--muted2)">// if sleeping</span></span>
+        <span>&nbsp;</span>
+        <span class="step">[at syscall exit in dispatch()]</span>
+        <span class="sub-step arrow">→ deliver_pending_at_syscall_exit(frame)</span>
+        <span class="sub-sub arrow">→ for each pending signal:</span>
+        <span class="sub-sub" style="padding-left:60px;color:var(--accent2)">User handler:  build_signal_frame() → patch frame.rip</span>
+        <span class="sub-sub" style="padding-left:60px;color:var(--accent2)">               set_user_rsp(new_rsp)</span>
+        <span class="sub-sub" style="padding-left:60px;color:var(--muted)">Default:       apply_default() [terminate / stop / ignore]</span>
+        <span>&nbsp;</span>
+        <span class="step">[handler runs, calls sigreturn (syscall 15)]</span>
+        <span class="sub-step arrow">→ sigreturn(frame)</span>
+        <span class="sub-sub arrow">→ read SigFrame from get_user_rsp()</span>
+        <span class="sub-sub arrow">→ restore all regs into SyscallFrame</span>
+        <span class="sub-sub arrow">→ set_user_rsp(mc.rsp)</span>
+        <span class="sub-sub arrow">→ return mc.rax</span>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- USERLAND -->
+<section id="userland" class="section">
+    <div class="section-header reveal">
+        <div class="section-eyebrow">Userspace</div>
+        <h2>Userland Utilities</h2>
+        <p>70+ standalone Rust binaries targeting <code style="color:var(--accent2)">x86_64-qunix-user</code>. Each is compiled with <code style="color:var(--accent2)">no_std</code> / <code style="color:var(--accent2)">no_main</code> and linked against <code style="color:var(--accent2)">libsys</code>.</p>
+    </div>
+
+    <div class="util-grid reveal">
+        <span class="util-chip">awk</span><span class="util-chip">b64encode</span><span class="util-chip">basename</span>
+        <span class="util-chip">cat</span><span class="util-chip">chmod</span><span class="util-chip">chown</span>
+        <span class="util-chip">column</span><span class="util-chip">comm</span><span class="util-chip">cp</span>
+        <span class="util-chip">cut</span><span class="util-chip">date</span><span class="util-chip">dd</span>
+        <span class="util-chip">df</span><span class="util-chip">dirname</span><span class="util-chip">dmesg</span>
+        <span class="util-chip">du</span><span class="util-chip">echo</span><span class="util-chip">env</span>
+        <span class="util-chip">expand</span><span class="util-chip">expr</span><span class="util-chip">false</span>
+        <span class="util-chip">find</span><span class="util-chip">fold</span><span class="util-chip">free</span>
+        <span class="util-chip">grep</span><span class="util-chip">head</span><span class="util-chip">hostname</span>
+        <span class="util-chip">id</span><span class="util-chip">init</span><span class="util-chip">kill</span>
+        <span class="util-chip">less</span><span class="util-chip">ln</span><span class="util-chip">ls</span>
+        <span class="util-chip">lscpu</span><span class="util-chip">md5sum</span><span class="util-chip">mkdir</span>
+        <span class="util-chip">mkfifo</span><span class="util-chip">mktemp</span><span class="util-chip">more</span>
+        <span class="util-chip">mv</span><span class="util-chip">nl</span><span class="util-chip">nproc</span>
+        <span class="util-chip">paste</span><span class="util-chip">pgrep</span><span class="util-chip">pluginctl</span>
+        <span class="util-chip">printf</span><span class="util-chip">ps</span><span class="util-chip">pwd</span>
+        <span class="util-chip">qshell</span><span class="util-chip">readlink</span><span class="util-chip">realpath</span>
+        <span class="util-chip">rev</span><span class="util-chip">rm</span><span class="util-chip">sed</span>
+        <span class="util-chip">seq</span><span class="util-chip">sha256sum</span><span class="util-chip">shuf</span>
+        <span class="util-chip">sleep</span><span class="util-chip">sort</span><span class="util-chip">stat</span>
+        <span class="util-chip">sync</span><span class="util-chip">tac</span><span class="util-chip">tail</span>
+        <span class="util-chip">tee</span><span class="util-chip">time</span><span class="util-chip">timeout</span>
+        <span class="util-chip">touch</span><span class="util-chip">tr</span><span class="util-chip">true</span>
+        <span class="util-chip">tty</span><span class="util-chip">uname</span><span class="util-chip">uniq</span>
+        <span class="util-chip">uptime</span><span class="util-chip">wait</span><span class="util-chip">wc</span>
+        <span class="util-chip">which</span><span class="util-chip">whoami</span><span class="util-chip">xargs</span>
+        <span class="util-chip">yes</span>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- SHELL -->
+<section id="shell" class="section">
+    <div class="section-header reveal">
+        <div class="section-eyebrow">Interactive Shell</div>
+        <h2>qshell</h2>
+        <p>Qunix ships its own POSIX-compatible shell (<code style="color:var(--accent2)">qshell</code> / <code style="color:var(--accent2)">qsh</code>) with job control, syntax highlighting, history, and completion.</p>
+    </div>
+
+    <div class="grid-2 reveal" style="margin-bottom:24px;">
+        <div class="card">
+            <h3>Shell Features</h3>
+            <p>Pipelines, redirection (<code style="font-size:12px;color:var(--accent2)">&gt; &lt; &gt;&gt;</code>), background jobs (<code style="font-size:12px;color:var(--accent2)">&amp;</code>), job control (Ctrl+Z / fg / bg), command history (up/down), tab completion, and environment variables.</p>
+        </div>
+        <div class="card">
+            <h3>Configuration</h3>
+            <p>Edit <code style="font-size:12px;color:var(--accent2)">~/.qshrc</code> for aliases, PATH extensions, and environment. Global shell config lives in <code style="font-size:12px;color:var(--accent2)">/etc/profile</code>.</p>
+        </div>
+    </div>
+
+    <div class="code-block reveal">
+        <div class="code-header"><span class="code-lang">bash — qsh Session Examples</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+        <pre><code>qunix:/root$ ls -la /bin
+qunix:/root$ cat /etc/hostname
+qunix:/root$ grep -r "pattern" /usr/share | sort | uniq -c
+qunix:/root$ ./my_program &amp;
+[1] 42
+qunix:/root$ jobs
+[1]+ Running  ./my_program
+qunix:/root$ fg %1
+
+<span class="cm"># ~/.qshrc</span>
+<span class="kw">alias</span> ll=<span class="str">'ls -l'</span>
+<span class="kw">alias</span> la=<span class="str">'ls -a'</span>
+export EDITOR=nano
+export PATH=$PATH:/usr/local/bin</code></pre>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- PLUGINS -->
+<section id="plugins" class="section">
+    <div class="section-header reveal">
+        <div class="section-eyebrow">Extensibility</div>
+        <h2>Plugin System</h2>
+        <p>Qunix supports loadable kernel modules called plugins. They can be inserted and removed at runtime and hook into scheduler, syscall, and I/O paths.</p>
+    </div>
+
+    <div class="grid-2 reveal" style="margin-bottom:24px;">
+        <div class="card">
+            <div class="card-icon">📊</div>
+            <h3>perf_monitor</h3>
+            <p>Built-in performance monitoring plugin. Tracks CPU usage, syscall frequency, and scheduler events. Enabled via <code style="font-size:12px;color:var(--accent2)">pluginctl enable perf_monitor</code>.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">📝</div>
+            <h3>syscall_logger</h3>
+            <p>Logs all system calls with arguments and return values to the kernel log. Invaluable for debugging userland programs or auditing behavior.</p>
+        </div>
+    </div>
+
+    <div class="code-block reveal">
+        <div class="code-header"><span class="code-lang">rust — Writing a Plugin</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+        <pre><code><span class="kw">use</span> crate::plugins::{Plugin, PluginMeta, PluginEntry};
+
+<span class="kw">pub struct</span> MyPlugin;
+
+<span class="kw">impl</span> Plugin <span class="kw">for</span> MyPlugin {
+    <span class="kw">fn</span> <span class="fn">init</span>(&amp;self) {
+        <span class="fn">klog!</span>(<span class="str">"My plugin initialized"</span>);
+    }
+
+    <span class="kw">fn</span> <span class="fn">deinit</span>(&amp;self) {
+        <span class="fn">klog!</span>(<span class="str">"My plugin deinitialized"</span>);
+    }
+
+    <span class="kw">fn</span> <span class="fn">pre_syscall</span>(&amp;self, ctx: &amp;SyscallCtx) {
+        <span class="cm">// intercept syscalls here</span>
+    }
+
+    <span class="kw">fn</span> <span class="fn">scheduler_tick</span>(&amp;self) {
+        <span class="cm">// fires on each scheduler timer interrupt</span>
+    }
+}
+
+<span class="fn">plugin_entry!</span>(MyPlugin);</code></pre>
+    </div>
+
+    <div class="code-block reveal" style="margin-top:12px;">
+        <div class="code-header"><span class="code-lang">bash — Plugin Management</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+        <pre><code>pluginctl list                         <span class="cm"># show all plugins</span>
+pluginctl enable  perf_monitor         <span class="cm"># load plugin at runtime</span>
+pluginctl disable syscall_logger       <span class="cm"># unload plugin</span></code></pre>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- SECURITY -->
+<section id="security" class="section">
+    <div class="section-header reveal">
+        <div class="section-eyebrow">Security Model</div>
+        <h2>Security</h2>
+        <p>Defense-in-depth via Rust's compile-time guarantees layered over traditional OS-level enforcement: namespaces, seccomp, MAC policies, and memory tagging.</p>
+    </div>
+
+    <div class="sec-grid reveal">
+        <div class="sec-item">
+            <div class="sec-dot active"></div>
+            <div class="sec-name">Rust Memory Safety</div>
+            <div class="sec-desc">No buffer overflows, use-after-free, or data races — enforced at compile time across all kernel code</div>
+            <span class="sec-status active">Active</span>
+        </div>
+        <div class="sec-item">
+            <div class="sec-dot active"></div>
+            <div class="sec-name">POSIX Permission Model</div>
+            <div class="sec-desc">UID/GID, rwx permissions, setuid/setgid, sticky bit, capability-based privilege isolation</div>
+            <span class="sec-status active">Active</span>
+        </div>
+        <div class="sec-item">
+            <div class="sec-dot active"></div>
+            <div class="sec-name">Process Isolation</div>
+            <div class="sec-desc">Isolated virtual address spaces, resource limits, ASLR (partial), per-process credentials</div>
+            <span class="sec-status active">Active</span>
+        </div>
+        <div class="sec-item">
+            <div class="sec-dot partial"></div>
+            <div class="sec-name">Namespaces</div>
+            <div class="sec-desc">Process and IPC namespace isolation implemented; user and PID namespaces partially complete</div>
+            <span class="sec-status partial">Partial</span>
+        </div>
+        <div class="sec-item">
+            <div class="sec-dot partial"></div>
+            <div class="sec-name">Seccomp</div>
+            <div class="sec-desc">System call filtering infrastructure in place; full BPF-based policy enforcement in progress</div>
+            <span class="sec-status partial">Partial</span>
+        </div>
+        <div class="sec-item">
+            <div class="sec-dot partial"></div>
+            <div class="sec-name">Memory Tagging (MTE)</div>
+            <div class="sec-desc">Hardware-assisted bounds checking stub present; full implementation planned</div>
+            <span class="sec-status partial">Partial</span>
+        </div>
+        <div class="sec-item">
+            <div class="sec-dot planned"></div>
+            <div class="sec-name">MAC Policies (AppArmor/SELinux-style)</div>
+            <div class="sec-desc">Mandatory access control framework designed; label propagation work ongoing</div>
+            <span class="sec-status planned">Planned</span>
+        </div>
+        <div class="sec-item">
+            <div class="sec-dot planned"></div>
+            <div class="sec-name">Kernel Hardening (CFI / CET)</div>
+            <div class="sec-desc">Control-flow integrity and shadow stack mitigations targeted for medium-term roadmap</div>
+            <span class="sec-status planned">Planned</span>
+        </div>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- CHANGELOG -->
+<section id="changelog" class="section">
+    <div class="section-header reveal">
+        <div class="section-eyebrow">Release History</div>
+        <h2>Changelog</h2>
+    </div>
+
+    <div class="reveal">
+        <div class="changelog-item">
+            <div class="changelog-ver">
+                <div class="ver-num">v0.2.0</div>
+                <div class="ver-date">Apr 2026</div>
+            </div>
+            <div class="changelog-content">
+                <h4>Initial Public Release — Complete Platform</h4>
+                <p style="font-size:13.5px;color:var(--muted);line-height:1.6;">Full kernel implementation with complete process model, preemptive scheduler, demand-paged memory management, VFS, and signal delivery. Ships with 70+ userland utilities, qshell, init system, and libsys. Adds networking (TCP/UDP/IP), IPC (pipes, shm, futexes), security (namespaces, seccomp, MAC), plugin system, DRM/KMS, and io_uring. Complete build system and documentation.</p>
+                <div class="changelog-tags">
+                    <span class="tag green">kernel</span>
+                    <span class="tag green">userland</span>
+                    <span class="tag green">networking</span>
+                    <span class="tag green">security</span>
+                    <span class="tag green">plugins</span>
+                    <span class="tag">docs</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="changelog-item">
+            <div class="changelog-ver">
+                <div class="ver-num">v0.1.0</div>
+                <div class="ver-date">Dec 2025</div>
+            </div>
+            <div class="changelog-content">
+                <h4>Foundation Release — Bootstrap</h4>
+                <p style="font-size:13.5px;color:var(--muted);line-height:1.6;">Established the Qunix project repository and build infrastructure. Brought up basic x86-64 kernel bootstrap, GDT/IDT setup, initial memory management, serial output, and development toolchain integration.</p>
+                <div class="changelog-tags">
+                    <span class="tag">bootstrap</span>
+                    <span class="tag">build-system</span>
+                    <span class="tag">arch</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- ROADMAP -->
+<section id="roadmap" class="section">
+    <div class="section-header reveal">
+        <div class="section-eyebrow">What's Next</div>
+        <h2>Roadmap &amp; Known TODOs</h2>
+        <p>The following items are tracked in <code style="color:var(--accent2)">TODO.md</code> as the next wave of work across kernel, filesystem, security, and userland.</p>
+    </div>
+
+    <div class="todo-list reveal">
+        <div class="todo-item">
+            <div class="todo-check pending"></div>
+            <div class="todo-text"><strong>sys_fchdir / sys_link</strong> — Proper path reconstruction from inode; hard-link semantics in VFS</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check pending"></div>
+            <div class="todo-text"><strong>POSIX timer APIs</strong> — sys_alarm, setitimer, timer_create, timer_settime and friends</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check pending"></div>
+            <div class="todo-text"><strong>inotify support</strong> — inotify_init1, inotify_add_watch, inotify_rm_watch</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check pending"></div>
+            <div class="todo-text"><strong>io_uring syscall path</strong> — io_uring_setup, io_uring_enter, io_uring_register kernel handlers</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check pending"></div>
+            <div class="todo-text"><strong>VDSO clock_gettime trampoline</strong> — Fill the VDSO page with a valid clock_gettime stub</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check pending"></div>
+            <div class="todo-text"><strong>AHCI SATA driver</strong> — PCIe AHCI device support under drivers/pcie/</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check pending"></div>
+            <div class="todo-text"><strong>DRM vblank events</strong> — Deliver vblank events to the FD event queue for page flips</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check pending"></div>
+            <div class="todo-text"><strong>FAT32 root inode</strong> — Remove ENOSYS stubs; complete SuperblockOps implementation</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check pending"></div>
+            <div class="todo-text"><strong>sed completion</strong> — Finish n, N, r, w, and other sed script commands in userland/sed</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check pending"></div>
+            <div class="todo-text"><strong>POSIX compliance test suite</strong> — Filesystem, signals, timers, and syscall conformance tests</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check pending"></div>
+            <div class="todo-text"><strong>Full namespace support</strong> — Complete user and PID namespace isolation</div>
+        </div>
+        <div class="todo-item">
+            <div class="todo-check pending"></div>
+            <div class="todo-text"><strong>Seccomp BPF filtering</strong> — Stabilize seccomp and MAC policy enforcement</div>
+        </div>
+    </div>
+</section>
+
+</main>
 </div>
 
+<!-- FOOTER -->
+<footer class="footer">
+    <p>Qunix OS — <a href="https://github.com/MohammadMuzamil23/Qunix-Operating-System/" target="_blank">GitHub</a> · Apache 2.0 License · v0.2.0 (April 2026)</p>
+</footer>
+
+<!-- BACK TO TOP -->
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
 <script>
+// ── THEME ──
 function toggleMode() {
-    document.body.classList.toggle("light");
+    document.body.classList.toggle('light');
+    localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
+}
+if (localStorage.getItem('theme') === 'light') document.body.classList.add('light');
+
+// ── SMOOTH SCROLL ──
+function scrollTo(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── SIDEBAR ACTIVE ──
+const sections = ['hero','overview','building','architecture','memory','subsystems','signals','syscalls','userland','shell','plugins','security','changelog','roadmap'];
+const sidebarLinks = document.querySelectorAll('.sidebar-link');
+
+function updateActive() {
+    const scrollY = window.scrollY + 100;
+    let current = 'hero';
+    sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollY) current = id;
+    });
+    sidebarLinks.forEach(l => {
+        const onclick = l.getAttribute('onclick') || '';
+        l.classList.toggle('active', onclick.includes(`'${current}'`));
+    });
+}
+
+// ── REVEAL ON SCROLL ──
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── BACK TO TOP ──
+const backTop = document.getElementById('backTop');
+window.addEventListener('scroll', () => {
+    backTop.classList.toggle('visible', window.scrollY > 400);
+    updateActive();
+}, { passive: true });
+
+// ── COPY CODE ──
+function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
 }
 </script>
 
